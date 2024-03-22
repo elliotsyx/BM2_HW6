@@ -1,0 +1,47 @@
+---
+title: "BM2_HW2"
+author: "Yixiao Sun"
+date: "2024-03-22"
+output: pdf_document
+---
+
+# Question 1
+
+
+# Question 2
+```{r}
+# Load data
+data <- read.table("HW6-dental.txt", header = TRUE)
+
+# Spaghetti plot
+library(ggplot2)
+ggplot(data, aes(x = Age, y = Distance, group = Child, color = as.factor(Gender))) +
+  geom_line() +
+  geom_point() +
+  labs(color = "Gender") +
+  scale_color_manual(values = c("1" = "blue", "0" = "pink"), labels = c("1" = "Boy", "0" = "Girl")) +
+  theme_minimal() +
+  ggtitle("Spaghetti Plot of Dental Distance by Age and Gender")
+
+```
+
+```{r}
+# Load the nlme package for fitting models
+library(nlme)
+
+# Fit the model with compound symmetry covariance structure
+model_cs <- lme(Distance ~ Age * as.factor(Gender), data = data, random = ~1 | Child, correlation = corCompSymm(form = ~1 | Child))
+
+# Fit the model with exponential covariance structure
+model_exp <- lme(Distance ~ Age * as.factor(Gender), data = data, random = ~1 | Child, correlation = corExp(form = ~ Age | Child))
+
+# Fit the model with autoregressive covariance structure
+model_ar <- lme(Distance ~ Age * as.factor(Gender), data = data, random = ~1 | Child, correlation = corAR1(form = ~ Age | Child))
+
+# Summary of models to compare coefficients and covariance estimates
+summary(model_cs)
+summary(model_exp)
+summary(model_ar)
+
+```
+
